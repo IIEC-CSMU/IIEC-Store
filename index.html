@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Store.iiec.in — an upcoming initiative by the Incubation Innovation & Entrepreneurship Cell. A home for student-built products: discovered, tested and kept growing long after submission. Join early access.">
+<meta name="theme-color" content="#F6F2EA">
+<title>Store.IIEC.in — A Home for Student-Built Products</title>
+
+<link rel="icon" href="assets/iiec-logo-96.png" sizes="96x96" type="image/png">
+<link rel="icon" href="assets/iiec-logo-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="assets/iiec-logo-192.png">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link href="https://cdn.jsdelivr.net/npm/@fontsource-variable/inter/index.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/instrument-serif/400.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/instrument-serif/400-italic.css" rel="stylesheet">
+
+<style>
+/* ===================== TOKENS ===================== */
+:root{
+  --bg:#F6F2EA;
+  --bg-deep:#EFE9DD;
+  --surface:#FFFCF6;
+  --ink:#1C1C1C;
+  --ink-soft:#3A3733;
+  --muted:#66635F;
+  --faint:#857F78;
+  --line:#D9D2C7;
+  --line-soft:#E8E2D8;
+  --accent:#B66A3C;
+  --accent-deep:#9A5730;
+  --accent-soft:#F3E9DF;
+  --accent-glow:rgba(182,106,60,.16);
+  --err:#A63A20;
+  --tape:rgba(217,210,199,.72);
+  /* buttons: dark charcoal → warm bronze on hover */
+  --btn:#1C1C1C;
+  --btn-hover:#B66A3C;
+  /* footer (charcoal) text ramp */
+  --foot-txt:#A8A29A;
+  --foot-strong:#EDE7DD;
+  --foot-dim:#837E77;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --sans:'Inter Variable','Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --serif:'Instrument Serif',Georgia,'Times New Roman',serif;
+  --maxw:1220px;
+  --nav-h:68px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{background:var(--bg);scroll-behavior:smooth;scroll-padding-top:84px;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{
+  font-family:var(--sans);font-weight:400;color:var(--ink-soft);background:var(--bg);
+  line-height:1.55;font-feature-settings:"cv02","cv03","cv04","ss01";
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden;
+}
+/* ambient layered wash — whisper-quiet, on-palette */
+body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:radial-gradient(1040px 560px at 88% -10%, rgba(182,106,60,.06), transparent 60%),
+             radial-gradient(820px 480px at -8% 12%, rgba(28,28,28,.035), transparent 58%)}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background-image:linear-gradient(rgba(28,28,28,.026) 1px,transparent 1px),linear-gradient(90deg,rgba(28,28,28,.026) 1px,transparent 1px);
+  background-size:56px 56px;
+  -webkit-mask-image:radial-gradient(ellipse 96% 62% at 50% -4%, #000 16%, transparent 76%);
+          mask-image:radial-gradient(ellipse 96% 62% at 50% -4%, #000 16%, transparent 76%)}
+::selection{background:rgba(182,106,60,.16)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+img,svg{display:block}
+em{font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.005em}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.skip{position:fixed;top:14px;left:14px;z-index:600;background:var(--ink);color:#fff;padding:9px 15px;border-radius:10px;font-size:.8rem;font-weight:600;transform:translateY(-86px);transition:transform .3s var(--ease)}
+.skip:focus{transform:none}
+
+.container{width:min(var(--maxw),100% - 48px);margin-inline:auto;position:relative;z-index:2}
+.kicker{display:inline-flex;align-items:center;gap:11px;font-size:.7rem;letter-spacing:.26em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.kicker::before{content:"";width:24px;height:1.5px;background:var(--accent);border-radius:2px}
+.kicker .n{color:var(--faint);font-variant-numeric:tabular-nums}
+.rule{height:1px;background:var(--line);border:0;width:100%}
+
+.progress{position:fixed;top:0;left:0;height:2px;width:0;background:var(--accent);z-index:400;transition:width .08s linear}
+.edge{position:fixed;top:50%;right:15px;z-index:60;transform:translateY(-50%) rotate(90deg);transform-origin:center;
+  font-size:.6rem;letter-spacing:.5em;text-transform:uppercase;color:var(--faint);font-weight:600;white-space:nowrap;pointer-events:none;opacity:.6}
+
+/* fixed folio */
+.folio{position:fixed;left:clamp(20px,4vw,46px);bottom:22px;z-index:60;display:flex;align-items:baseline;gap:9px;
+  font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600;mix-blend-mode:multiply}
+.folio .fnum{font-variant-numeric:tabular-nums;color:var(--ink);font-weight:700;letter-spacing:.05em;min-width:1.4em;display:inline-block}
+.folio .fsep{color:var(--faint)}
+.folio .ftot{color:var(--faint);font-variant-numeric:tabular-nums}
+.folio .ftitle{margin-left:6px;color:var(--muted);transition:opacity .35s}
+
+/* ===================== NAV ===================== */
+.nav{position:fixed;top:0;left:0;right:0;z-index:300;height:var(--nav-h);display:flex;align-items:center;
+  transition:background .35s var(--ease),box-shadow .35s,border-color .35s,backdrop-filter .35s;border-bottom:1px solid transparent}
+.nav.scrolled{background:rgba(246,242,234,.72);-webkit-backdrop-filter:blur(16px) saturate(1.5);backdrop-filter:blur(16px) saturate(1.5);border-bottom-color:var(--line)}
+.nav .container{display:flex;align-items:center;justify-content:space-between;gap:24px}
+.brand{font-size:1rem;font-weight:700;letter-spacing:-.02em;color:var(--ink);display:inline-flex;align-items:center;gap:1px}
+.brand .dot{color:var(--accent)}
+.brand small{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);font-weight:600;margin-left:11px;padding-left:11px;border-left:1px solid var(--line)}
+.logo-mark{flex:none;display:grid;place-items:center;width:34px;height:34px;margin-right:10px;border-radius:10px;
+  background:var(--surface);border:1px solid var(--line);box-shadow:0 1px 2px rgba(28,28,28,.05);overflow:hidden}
+.logo-mark img{width:100%;height:100%;object-fit:contain}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-links a{position:relative;padding:8px 13px;border-radius:9px;font-size:.86rem;font-weight:500;color:var(--muted);transition:color .25s,background .25s}
+.nav-links a:hover{color:var(--ink);background:rgba(28,28,28,.04)}
+.nav-links a.active{color:var(--ink)}
+.nav-links a.active::after{content:"";position:absolute;left:13px;right:13px;bottom:2px;height:2px;background:var(--accent);border-radius:2px}
+.nav-cta{display:flex;align-items:center;gap:14px}
+.burger{display:none;width:44px;height:44px;border-radius:10px;flex-direction:column;justify-content:center;gap:5px;padding:11px;transition:background .2s}
+.burger:hover{background:rgba(28,28,28,.05)}
+.burger span{display:block;height:2px;width:100%;background:var(--ink);border-radius:2px;transition:transform .3s var(--ease),opacity .2s}
+.burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.burger.open span:nth-child(2){opacity:0}
+.burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.mmenu{position:fixed;top:var(--nav-h);left:0;right:0;z-index:290;background:rgba(246,242,234,.96);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:12px 24px 24px;display:grid;gap:2px;opacity:0;visibility:hidden;transform:translateY(-10px);transition:opacity .3s,transform .3s var(--ease),visibility .3s}
+.mmenu.open{opacity:1;visibility:visible;transform:none}
+.mmenu a{padding:13px 12px;border-radius:10px;font-weight:600;color:var(--ink-soft);transition:background .2s}
+.mmenu a:hover{background:rgba(28,28,28,.05)}
+.mmenu .btn{margin-top:10px}
+
+/* ===================== BUTTONS ===================== */
+.btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  font-weight:600;font-size:.9rem;line-height:1;padding:13px 24px;border-radius:999px;border:1px solid transparent;
+  transition:transform .25s var(--ease),box-shadow .25s,background .25s,border-color .25s,color .25s;-webkit-tap-highlight-color:transparent;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn svg{width:16px;height:16px;flex:none;position:relative;z-index:1}
+.btn .arr{transition:transform .3s var(--ease)}
+.btn:hover .arr{transform:translateX(3px)}
+.btn-primary{background:var(--btn);color:#fff;box-shadow:0 1px 2px rgba(28,28,28,.28),0 12px 26px -12px rgba(28,28,28,.45)}
+.btn-primary::after{content:"";position:absolute;inset:0;background:var(--btn-hover);transform:translateY(101%);transition:transform .4s var(--ease);z-index:0}
+.btn-primary:hover::after{transform:translateY(0)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(154,87,48,.3),0 18px 34px -12px rgba(182,106,60,.55)}
+.btn-primary span.lbl{position:relative;z-index:1}
+.btn-ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent-deep);transform:translateY(-2px);background:var(--surface);box-shadow:0 12px 30px -16px rgba(28,28,28,.22)}
+.btn-sm{padding:10px 18px;font-size:.84rem}
+.btn[disabled]{opacity:.6;cursor:default;transform:none!important}
+.btn[disabled]::after{transform:translateY(101%)!important}
+.spin{width:15px;height:15px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none;position:relative;z-index:1}
+.btn.loading .spin{display:inline-block}
+.btn.loading .arr{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ===================== REVEAL ===================== */
+[data-reveal]{opacity:0;transform:translateY(28px);transition:opacity .9s var(--ease),transform 1s var(--ease),filter .9s var(--ease);transition-delay:var(--d,0ms);will-change:opacity,transform}
+[data-reveal="blur"]{transform:translateY(16px);filter:blur(8px)}
+[data-reveal="left"]{transform:translateX(-34px)}
+[data-reveal="right"]{transform:translateX(34px)}
+[data-reveal="fade"]{transform:none}
+[data-reveal].in{opacity:1;transform:none;filter:none}
+
+/* ===================== HERO ===================== */
+.hero{position:relative;min-height:min(100vh,860px);display:flex;align-items:center;padding:calc(var(--nav-h) + clamp(24px,4vh,48px)) 0 clamp(36px,5vh,60px);overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1.04fr .96fr;gap:clamp(28px,5vw,60px);align-items:center}
+.badge{display:inline-flex;align-items:center;gap:9px;font-size:.76rem;font-weight:600;letter-spacing:.01em;color:var(--ink-soft);
+  background:var(--surface);border:1px solid var(--line);padding:8px 15px 8px 13px;border-radius:999px;box-shadow:0 1px 2px rgba(28,28,28,.04);margin-bottom:20px}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);position:relative;flex:none}
+.status-dot::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--accent);opacity:.5;animation:pulse 2.2s ease-out infinite}
+@keyframes pulse{0%{transform:scale(.4);opacity:.7}80%,100%{transform:scale(1.4);opacity:0}}
+.hero h1{font-size:clamp(2.5rem,5.4vw,4.6rem);line-height:1.03;letter-spacing:-.035em;font-weight:600;color:var(--ink);margin-bottom:20px;max-width:15ch}
+.hero h1 .l2{display:block}
+.hero h1 em{font-size:1.06em;color:var(--ink)}
+.hero h1 .per{color:var(--accent)}
+.hero-lede{font-size:clamp(1rem,1.22vw,1.1rem);line-height:1.72;color:var(--muted);max-width:54ch;margin-bottom:16px}
+.hero-lede strong{color:var(--ink);font-weight:600}
+.hero-lede.last{margin-bottom:26px}
+.hero-cta{display:flex;gap:13px;flex-wrap:wrap;margin-bottom:26px}
+.hero-foot{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.cue{display:flex;align-items:center;gap:11px;color:var(--muted);font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;font-weight:600}
+.cue .bar{width:42px;height:1px;background:var(--line);position:relative;overflow:hidden}
+.cue .bar i{position:absolute;left:-30%;top:0;width:30%;height:1px;background:var(--ink);animation:cueH 2.6s var(--ease) infinite}
+@keyframes cueH{0%{left:-30%}60%,100%{left:100%}}
+.hero-foot .note{font-size:.82rem;color:var(--faint)}
+
+/* pinned idea wall */
+.wall{position:relative;height:clamp(440px,52vh,580px)}
+.wall .reg{position:absolute;width:11px;height:11px;pointer-events:none;opacity:.7}
+.wall .reg::before,.wall .reg::after{content:"";position:absolute;background:var(--line)}
+.wall .reg::before{left:50%;top:0;width:1px;height:100%;transform:translateX(-50%)}
+.wall .reg::after{top:50%;left:0;height:1px;width:100%;transform:translateY(-50%)}
+.note{position:absolute;background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  padding:15px 16px 13px;box-shadow:0 16px 38px -22px rgba(28,28,28,.34),0 2px 6px rgba(28,28,28,.04);
+  transform:translate3d(var(--px,0px),var(--py,0px),0) rotate(var(--rot,0deg));
+  transition:transform .5s var(--ease),box-shadow .4s;animation:floaty var(--fd,7s) ease-in-out var(--fdel,0s) infinite}
+.note:hover{box-shadow:0 26px 54px -22px rgba(182,106,60,.34),0 2px 6px rgba(28,28,28,.05);z-index:30!important}
+@keyframes floaty{0%,100%{transform:translate3d(var(--px,0px),var(--py,0px),0) rotate(var(--rot,0deg)) translateY(0)}50%{transform:translate3d(var(--px,0px),calc(var(--py,0px) - 8px),0) rotate(var(--rot,0deg))}}
+/* pin */
+.note.pin::before{content:"";position:absolute;top:-5px;left:50%;transform:translateX(-50%);width:11px;height:11px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #fff, var(--accent) 70%);box-shadow:0 2px 4px rgba(28,28,28,.3)}
+/* tape */
+.note.tape::before{content:"";position:absolute;top:-9px;left:50%;transform:translateX(-50%) rotate(var(--trot,-4deg));width:46px;height:17px;
+  background:var(--tape);border-radius:2px;box-shadow:0 1px 2px rgba(28,28,28,.08)}
+/* clip */
+.note.clip::before{content:"";position:absolute;top:-12px;left:18px;width:13px;height:26px;border:2px solid var(--faint);border-radius:7px;background:transparent}
+.note.clip::after{content:"";position:absolute;top:-7px;left:21px;width:7px;height:14px;border:2px solid var(--faint);border-radius:4px}
+.note-label{font-size:clamp(.92rem,1.1vw,1.05rem);font-weight:600;color:var(--ink);letter-spacing:-.01em;line-height:1.2}
+.note.it .note-label{font-family:var(--serif);font-weight:400;font-size:clamp(1.05rem,1.4vw,1.3rem)}
+.note-meta{display:flex;align-items:center;gap:7px;margin-top:11px;font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);font-weight:600}
+.note-meta::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--accent);opacity:.55}
+.note-rule{height:1px;background:var(--line-soft);margin-top:11px;width:64%}
+/* placement (desktop) */
+@media (min-width:980px){
+  .n1{top:1%;left:3%;width:178px;--rot:-3deg;z-index:12;--fd:7.2s;--fdel:-1s}
+  .n2{top:-3%;right:5%;width:166px;--rot:2.5deg;z-index:14;--fd:6.4s;--fdel:-2.4s}
+  .n3{top:34%;left:0%;width:158px;--rot:-2deg;z-index:10;--fd:7.8s;--fdel:-.6s}
+  .n4{top:30%;right:1%;width:182px;--rot:3deg;z-index:16;--fd:6.8s;--fdel:-3.4s}
+  .n5{top:62%;left:8%;width:168px;--rot:1.5deg;z-index:18;--fd:7.4s;--fdel:-1.8s}
+  .n6{top:60%;right:9%;width:160px;--rot:-2.5deg;z-index:13;--fd:6.6s;--fdel:-4s}
+  .n7{top:46%;left:38%;width:150px;--rot:-1deg;z-index:20;--fd:7s;--fdel:-2.9s}
+  .wall .r1{left:30%;top:24%}.wall .r2{left:64%;top:54%}.wall .r3{left:90%;top:88%}
+}
+
+/* ===================== SECTIONS ===================== */
+section{position:relative}
+.pad{padding:clamp(56px,7vw,96px) 0}
+.sec-head{margin-bottom:clamp(26px,4vw,44px)}
+.sec-head h2{font-size:clamp(1.9rem,4.4vw,3.4rem);line-height:1.05;letter-spacing:-.03em;font-weight:600;color:var(--ink);margin-top:18px;max-width:18ch}
+.sec-head h2 em{font-size:1.04em}
+.sec-head p{color:var(--muted);font-size:1.04rem;max-width:52ch;margin-top:16px}
+
+/* WHY — typographic, two columns */
+.why-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:clamp(26px,4vw,60px);align-items:start}
+/* font-size lives on the container so the ch measure resolves at display size */
+.why .lines{display:flex;flex-direction:column;gap:clamp(4px,.8vh,10px);font-size:clamp(1.2rem,2.3vw,1.95rem);max-width:30ch}
+.why .ln{font-size:inherit;line-height:1.24;letter-spacing:-.02em;font-weight:400;color:var(--ink)}
+.why .ln.dim{color:var(--muted);font-weight:300}
+.why .ln em{color:var(--ink)}
+.why .goal-col{align-self:stretch;display:flex;flex-direction:column;justify-content:center;
+  border-left:1px solid var(--line);padding-left:clamp(20px,2.6vw,40px)}
+.why .pre{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);font-weight:600;margin:0 0 12px}
+.why .goal{font-size:clamp(1.25rem,2.1vw,1.8rem);line-height:1.3;letter-spacing:-.02em;font-weight:500;color:var(--ink);max-width:26ch}
+.why .goal em{color:var(--accent)}
+
+/* COLLECTION — flowing typographic tags */
+.collection .wall-tags{display:flex;flex-wrap:wrap;align-items:flex-start;gap:clamp(14px,2.6vw,30px) clamp(20px,3.4vw,46px);max-width:1000px}
+.cat{position:relative;display:inline-flex;flex-direction:column;align-items:flex-start;background:none;border:0;padding:2px 2px 4px;text-align:left;color:var(--ink);line-height:1;letter-spacing:-.025em;transition:color .35s}
+.cat .idx{font-size:.6rem;letter-spacing:.1em;color:var(--faint);font-weight:600;font-variant-numeric:tabular-nums;margin-bottom:9px;transition:color .35s}
+.cat .w{display:inline-block;transition:transform .45s var(--ease)}
+.cat .cap{overflow:hidden;max-height:0;opacity:0;margin-top:0;font-family:var(--sans);font-style:normal;font-size:.8rem;line-height:1.5;color:var(--muted);font-weight:400;letter-spacing:0;max-width:240px;
+  transition:max-height .5s var(--ease),opacity .4s var(--ease),margin-top .4s var(--ease)}
+.cat .cap::before{content:"";display:block;width:18px;height:1.5px;background:var(--accent);border-radius:2px;margin-bottom:9px;opacity:0;transition:opacity .4s var(--ease) .1s}
+.cat:hover,.cat:focus-visible{color:var(--accent);outline:none}
+.cat:hover .idx,.cat:focus-visible .idx{color:var(--accent)}
+.cat:hover .w,.cat:focus-visible .w{transform:translateY(-3px)}
+.cat:hover .cap,.cat:focus-visible .cap,.cat.touched .cap{max-height:120px;opacity:1;margin-top:13px}
+.cat:hover .cap::before,.cat:focus-visible .cap::before,.cat.touched .cap::before{opacity:1}
+.sz-xl{font-size:clamp(2.1rem,5.6vw,4.4rem);font-weight:700;letter-spacing:-.04em}
+.sz-lg{font-size:clamp(1.6rem,3.8vw,2.9rem);font-weight:300}
+.sz-md{font-size:clamp(1.2rem,2.6vw,2rem);font-weight:500}
+.sz-sm{font-size:clamp(.95rem,1.7vw,1.4rem);font-weight:400;color:var(--ink-soft)}
+.it .w{font-family:var(--serif);font-style:italic;font-weight:400}
+
+/* JOIN / EARLY ACCESS */
+.join{background:var(--bg-deep)}
+.join .container{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(32px,5vw,80px);align-items:start}
+.join-lead{position:sticky;top:calc(var(--nav-h) + 30px)}
+.join-lead h2{font-size:clamp(2rem,4.8vw,4rem);line-height:1.03;letter-spacing:-.03em;font-weight:600;color:var(--ink);margin:20px 0 24px;max-width:13ch}
+.join-lead h2 em{font-size:1.04em}
+.join-lead p{font-size:1.02rem;line-height:1.7;color:var(--muted);max-width:38ch}
+.join-lead .sig{margin-top:24px;font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);font-weight:600}
+
+.form{display:flex;flex-direction:column}
+.field{display:flex;flex-direction:column;gap:9px;margin-bottom:22px}
+.field.row{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.field.row > div{display:flex;flex-direction:column;gap:9px}
+.field label{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.field label .opt{color:var(--faint);font-weight:500;letter-spacing:.1em}
+.ctrl{position:relative}
+.ctrl input,.ctrl select,.ctrl textarea{
+  width:100%;font:inherit;font-size:1.02rem;color:var(--ink);font-weight:400;background:transparent;
+  border:0;border-bottom:1px solid var(--line);padding:8px 0 12px;border-radius:0;transition:border-color .35s}
+.ctrl textarea{resize:vertical;min-height:78px;line-height:1.55}
+.ctrl input::placeholder,.ctrl textarea::placeholder{color:var(--faint);font-weight:300}
+.ctrl select{appearance:none;-webkit-appearance:none;cursor:pointer}
+.ctrl select:invalid{color:var(--faint);font-weight:300}
+.ctrl .arw{position:absolute;right:2px;top:10px;width:14px;height:14px;color:var(--faint);pointer-events:none;transition:color .3s}
+.ctrl .ln{position:absolute;left:0;bottom:0;height:1.5px;width:0;background:var(--accent);transition:width .45s var(--ease)}
+.ctrl:focus-within input,.ctrl:focus-within select,.ctrl:focus-within textarea{border-bottom-color:transparent}
+.ctrl:focus-within .ln{width:100%}
+.ctrl:focus-within .arw{color:var(--accent)}
+.ctrl input:user-invalid,.ctrl textarea:user-invalid{border-bottom-color:var(--err)}
+
+.form-msg{font-size:.82rem;margin-top:16px;min-height:1.2em}
+.form-msg.err{color:var(--err)}
+.form-msg.ok{color:var(--muted)}
+
+.done{display:none;flex-direction:column;gap:18px;padding:6px 0}
+.done.show{display:flex}
+.done .mark{width:50px;height:50px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center}
+.done .mark svg{width:22px;height:22px}
+.done .mark path{stroke-dasharray:26;stroke-dashoffset:26;animation:draw .5s var(--ease) .25s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.done h3{font-size:clamp(1.6rem,3.4vw,2.6rem);font-weight:600;letter-spacing:-.02em;color:var(--ink);line-height:1.1}
+.done h3 em{color:var(--accent)}
+.done p{font-size:1rem;color:var(--muted);max-width:42ch;line-height:1.65}
+.done p b{color:var(--ink);font-weight:600}
+.done .again{align-self:flex-start;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:600;border-bottom:1px solid var(--line);padding-bottom:4px;transition:color .3s,border-color .3s}
+.done .again:hover{color:var(--ink);border-color:var(--ink)}
+
+/* FOOTER */
+.foot{background:var(--ink);color:var(--foot-txt);padding:clamp(44px,6vh,64px) 0 22px}
+.foot .container{display:flex;flex-direction:column;gap:clamp(28px,4vh,42px)}
+.foot-grid{display:grid;grid-template-columns:1.5fr .8fr 1fr;gap:clamp(28px,4vw,56px)}
+.foot .brand{color:#FBF8F2;font-size:1.05rem}
+.foot .logo-mark{background:#FFFDF8;border-color:rgba(255,255,255,.16);width:38px;height:38px;padding:3px}
+.foot-desc{margin-top:14px;font-size:.88rem;line-height:1.65;color:var(--foot-txt);max-width:38ch}
+.foot-col h4{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--foot-strong);font-weight:700;margin-bottom:14px}
+.foot-col a{display:flex;align-items:center;gap:9px;padding:4px 0;font-size:.88rem;color:var(--foot-txt);transition:color .25s,transform .25s var(--ease)}
+.foot-col a:hover{color:#FBF8F2;transform:translateX(2px)}
+.foot-col a svg{width:15px;height:15px;flex:none;opacity:.75}
+.foot-init{margin-top:18px;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--foot-dim);line-height:1.9;font-weight:600}
+.foot-init b{color:var(--foot-strong);font-weight:700;display:block;letter-spacing:.1em}
+.foot-socials{display:flex;gap:10px;margin-top:18px}
+.foot-socials a{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.12);color:#C6C0B7;transition:background .25s,color .25s,border-color .25s,transform .25s var(--ease)}
+.foot-socials a:hover{background:var(--accent);border-color:var(--accent);color:#fff;transform:translateY(-3px)}
+.foot-socials svg{width:17px;height:17px}
+.foot-bottom{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.09);padding-top:20px;font-size:.72rem;letter-spacing:.06em;color:var(--foot-dim)}
+.foot-bottom a{transition:color .3s}
+.foot-bottom a:hover{color:#FBF8F2}
+
+/* ===================== RESPONSIVE ===================== */
+@media (max-width:1024px){
+  .foot-grid{grid-template-columns:1fr 1fr;gap:34px}
+  .hero-grid{grid-template-columns:1fr}
+  .wall{height:clamp(380px,48vh,460px);margin-top:14px}
+  .join .container{grid-template-columns:1fr;gap:46px}
+  .join-lead{position:static}
+}
+@media (max-width:980px){
+  .wall{display:grid;grid-template-columns:1fr 1fr;gap:16px;height:auto}
+  .note{position:static!important;width:auto!important;--rot:0deg!important;animation:none!important;transform:none!important}
+  .note.pin::before,.note.tape::before,.note.clip::before,.note.clip::after{display:none}
+  .note.tape{border-top:3px solid var(--accent)}
+  .wall .reg{display:none}
+}
+@media (max-width:900px){
+  .why-grid{grid-template-columns:1fr;gap:28px}
+  .why .goal-col{border-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:24px}
+  .nav-links,.nav-cta .btn{display:none}
+  .burger{display:flex}
+  .edge,.folio{display:none}
+}
+@media (max-width:680px){
+  .foot-grid{grid-template-columns:1fr;gap:28px}
+  .foot-bottom{flex-direction:column;align-items:flex-start}
+  .wall{grid-template-columns:1fr}
+  .field.row{grid-template-columns:1fr;gap:22px}
+  .hero-cta .btn{flex:1 1 auto}
+  .why .lines,.why .goal{max-width:none}
+  .why .lines{gap:6px}
+}
+@media (max-width:420px){.brand small{display:none}}
+/* touch: reveal category captions by default */
+@media (hover:none){
+  .cat .cap{max-height:120px;opacity:1;margin-top:13px}
+  .cat .cap::before{opacity:1}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  [data-reveal]{opacity:1!important;transform:none!important;filter:none!important}
+}
+</style>
+<noscript><style>[data-reveal]{opacity:1;transform:none;filter:none}</style></noscript>
+</head>
+<body>
+
+<a class="skip" href="#top">Skip to content</a>
+<div class="progress" id="progress" aria-hidden="true"></div>
+<div class="edge" aria-hidden="true">Store · iiec · In</div>
+<div class="folio" id="folio" aria-hidden="true">
+  <span class="fnum" id="fnum">01</span><span class="fsep">/</span><span class="ftot">04</span>
+  <span class="ftitle" id="ftitle">Opening</span>
+</div>
+
+<!-- ============ NAV ============ -->
+<header class="nav" id="nav">
+  <div class="container">
+    <a class="brand" href="#top" aria-label="Store.IIEC.in home">
+      <span class="logo-mark"><img src="assets/iiec-logo-96.png" alt="" width="34" height="34" decoding="async"></span>
+      Store<span class="dot">.</span>iiec<span class="dot">.</span>in<small>An Initiative</small></a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#about">About</a>
+      <a href="#vision">Vision</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="#join" class="btn btn-primary btn-sm"><span class="lbl">Notify Me</span>
+        <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+      <button class="burger" id="burger" aria-expanded="false" aria-controls="mmenu" aria-label="Open menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+<div class="mmenu" id="mmenu">
+  <a href="#about">About</a>
+  <a href="#vision">Vision</a>
+  <a href="#contact">Contact</a>
+  <a href="#join" class="btn btn-primary"><span class="lbl">Notify Me</span></a>
+</div>
+
+<main id="top">
+
+<!-- ============ HERO ============ -->
+<section class="hero" data-folio="01|Opening">
+  <div class="container hero-grid">
+    <div>
+      <span class="badge" data-reveal="fade"><span class="status-dot" aria-hidden="true"></span> Launching Soon</span>
+      <h1 data-reveal="blur" style="--d:80ms">
+        Store.iiec.in
+        <span class="l2">A Home for <em>Student-Built</em> Products<span class="per">.</span></span>
+      </h1>
+      <p class="hero-lede last" data-reveal="right" style="--d:300ms"><strong>Store.iiec.in</strong> is an upcoming initiative by IIEC that aims to give student-built projects a place where they can be discovered, experienced, tested, and continuously improved by the university community.</p>
+      <div class="hero-cta" data-reveal="fade" style="--d:420ms">
+        <a href="#join" class="btn btn-primary"><span class="lbl">Notify Me</span>
+          <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <a href="#vision" class="btn btn-ghost">Learn More
+          <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+        </a>
+      </div>
+      <div class="hero-foot" data-reveal="fade" style="--d:540ms">
+        <span class="cue" aria-hidden="true"><span class="bar"><i></i></span>Scroll</span>
+      </div>
+    </div>
+
+    <!-- pinned idea wall -->
+    <div class="wall" data-reveal="fade" style="--d:240ms" aria-hidden="true">
+      <span class="reg r1"></span><span class="reg r2"></span><span class="reg r3"></span>
+
+      <div class="note pin n1" data-px="14">
+        <div class="note-label">AI Project</div>
+        <div class="note-rule"></div>
+        <div class="note-meta">Idea · awaiting</div>
+      </div>
+      <div class="note tape n2 it" data-px="-12" style="--trot:-5deg">
+        <div class="note-label">Mobile App</div>
+        <div class="note-rule"></div>
+        <div class="note-meta">Draft · awaiting</div>
+      </div>
+      <div class="note clip n3" data-px="-16">
+        <div class="note-label">Web Application</div>
+        <div class="note-rule"></div>
+        <div class="note-meta">Prototype · awaiting</div>
+      </div>
+      <div class="note pin n4 it" data-px="12">
+        <div class="note-label">Research Tool</div>
+        <div class="note-rule"></div>
+        <div class="note-meta">Idea · awaiting</div>
+      </div>
+      <div class="note tape n5" data-px="10" style="--trot:4deg">
+        <div class="note-label">Automation</div>
+        <div class="note-rule"></div>
+        <div class="note-meta">Draft · awaiting</div>
+      </div>
+      <div class="note clip n6 it" data-px="-10">
+        <div class="note-label">Open Source</div>
+        <div class="note-rule"></div>
+        <div class="note-meta">Prototype · awaiting</div>
+      </div>
+      <div class="note pin n7" data-px="9">
+        <div class="note-label">Game</div>
+        <div class="note-rule"></div>
+        <div class="note-meta">Idea · awaiting</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHY ============ -->
+<section class="why pad" id="vision" data-folio="02|Vision">
+  <div class="container">
+    <hr class="rule" style="margin-bottom:clamp(30px,4vw,52px)" data-reveal="fade">
+    <div class="sec-head" data-reveal="blur">
+      <span class="kicker"><span class="n">01</span> The Why</span>
+      <h2>Why are we <em>building</em> this?</h2>
+    </div>
+    <div class="why-grid">
+    <div class="lines">
+      <span class="ln" data-reveal="left" style="--d:0ms">Every year, students create incredible projects.</span>
+      <span class="ln" data-reveal="left" style="--d:90ms">Some solve real problems.</span>
+      <span class="ln" data-reveal="left" style="--d:180ms">Some are creative experiments.</span>
+      <span class="ln" data-reveal="left" style="--d:270ms">Some have the potential to become startups.</span>
+      <span class="ln dim" data-reveal="left" style="--d:380ms">Yet most of them disappear after evaluation —</span>
+      <span class="ln dim" data-reveal="left" style="--d:470ms">not because they lack quality,</span>
+      <span class="ln dim" data-reveal="left" style="--d:560ms">but because they never had a place to continue growing.</span>
+      <span class="ln" data-reveal="left" style="--d:680ms">Store.iiec.in is being built to <em>change that</em>.</span>
+    </div>
+    <div class="goal-col" data-reveal="blur" style="--d:200ms">
+      <p class="pre">Our goal is simple</p>
+      <p class="goal">To create a space where student-built products can continue <em>evolving</em> beyond the classroom — through discovery, collaboration, and real-world feedback.</p>
+    </div>
+    </div>
+  </div>
+</section>
+<!-- ============ COLLECTION ============ -->
+<section class="collection pad" id="about" data-folio="03|Collection">
+  <div class="container">
+    <hr class="rule" style="margin-bottom:clamp(30px,4vw,52px)" data-reveal="fade">
+    <div class="sec-head" data-reveal="blur">
+      <span class="kicker"><span class="n">02</span> The Collection</span>
+      <h2>What you'll be able to <em>publish</em>.</h2>
+      <p>Not a menu of categories — a living collection of student work. Hover any word to read what it holds.</p>
+    </div>
+
+    <div class="wall-tags" id="tags" data-reveal="fade" style="--d:120ms">
+      <button class="cat sz-lg" type="button"><span class="idx">01</span><span class="w">Software Applications</span><span class="cap">Desktop and cross-platform tools people can install and actually use.</span></button>
+      <button class="cat sz-md it" type="button"><span class="idx">02</span><span class="w">Web Platforms</span><span class="cap">Full-stack web products, live and open to the community.</span></button>
+      <button class="cat sz-md" type="button"><span class="idx">03</span><span class="w">Mobile Applications</span><span class="cap">iOS and Android apps built and shipped by students.</span></button>
+      <button class="cat sz-xl" type="button"><span class="idx">04</span><span class="w">AI Projects</span><span class="cap">Models, agents and intelligent systems worth trying out.</span></button>
+      <button class="cat sz-sm" type="button"><span class="idx">05</span><span class="w">Machine Learning</span><span class="cap">Datasets, pipelines and reproducible experiments.</span></button>
+      <button class="cat sz-lg it" type="button"><span class="idx">06</span><span class="w">Games</span><span class="cap">Playable worlds, engines and interactive stories.</span></button>
+      <button class="cat sz-md" type="button"><span class="idx">07</span><span class="w">Automation Tools</span><span class="cap">Scripts and bots that quietly remove tedious work.</span></button>
+      <button class="cat sz-lg" type="button"><span class="idx">08</span><span class="w">Open Source Projects</span><span class="cap">Libraries and contributions anyone can build upon.</span></button>
+      <button class="cat sz-sm it" type="button"><span class="idx">09</span><span class="w">Research Projects</span><span class="cap">Papers, prototypes and findings made tangible.</span></button>
+      <button class="cat sz-md" type="button"><span class="idx">10</span><span class="w">Student Utilities</span><span class="cap">Small, sharp tools that solve one campus problem well.</span></button>
+      <button class="cat sz-lg it" type="button"><span class="idx">11</span><span class="w">Digital Products</span><span class="cap">Design systems, templates and finished creative goods.</span></button>
+      <button class="cat sz-sm" type="button"><span class="idx">12</span><span class="w">Creative Experiments</span><span class="cap">Generative art, sound and interaction play.</span></button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ JOIN / EARLY ACCESS ============ -->
+<section class="join pad" id="join" data-folio="04|Early Access">
+  <div class="container">
+    <div class="join-lead">
+      <span class="kicker" data-reveal="fade"><span class="n">03</span> Early Access</span>
+      <h2 data-reveal="blur" style="--d:80ms">Be among the first <em>creators</em>.</h2>
+      <p data-reveal="right" style="--d:200ms">We're currently building Store.iiec.in. If you'd like to publish your projects once the platform officially opens, leave your details below and we'll notify you when submissions begin.</p>
+      <p class="sig" data-reveal="fade" style="--d:340ms">— The iiec Web Team</p>
+    </div>
+
+    <div data-reveal="right" style="--d:140ms">
+      <form class="form" id="form" novalidate>
+        <div class="field">
+          <label for="name">Full Name</label>
+          <div class="ctrl"><input type="text" id="name" name="name" placeholder="Your full name" required autocomplete="name"><span class="ln"></span></div>
+        </div>
+        <div class="field">
+          <label for="email">Email Address</label>
+          <div class="ctrl"><input type="email" id="email" name="email" placeholder="you@college.edu" required autocomplete="email"><span class="ln"></span></div>
+        </div>
+        <div class="field">
+          <label for="phone">Phone Number</label>
+          <div class="ctrl"><input type="tel" id="phone" name="phone" placeholder="10-digit mobile number" required inputmode="numeric" autocomplete="tel" pattern="[0-9+ ()-]{10,15}"><span class="ln"></span></div>
+        </div>
+        <div class="field row">
+          <div>
+            <label for="branch">Branch</label>
+            <div class="ctrl">
+              <select id="branch" name="branch" required>
+                <option value="" disabled selected>Select</option>
+                <option value="CSE">Computer Science (CSE)</option>
+                <option value="IT">Information Technology (IT)</option>
+                <option value="AIML">AI &amp; Machine Learning (AIML)</option>
+                <option value="DS">Data Science (DS)</option>
+                <option value="ECE">Electronics &amp; Communication (ECE)</option>
+                <option value="EEE">Electrical &amp; Electronics (EEE)</option>
+                <option value="MECH">Mechanical (MECH)</option>
+                <option value="CIVIL">Civil (CIVIL)</option>
+                <option value="CHEM">Chemical (CHEM)</option>
+                <option value="BIOTECH">Biotechnology (BIOTECH)</option>
+                <option value="MBA">Management (MBA)</option>
+                <option value="OTHER">Other</option>
+              </select>
+              <svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              <span class="ln"></span>
+            </div>
+          </div>
+          <div>
+            <label for="year">Year of Study</label>
+            <div class="ctrl">
+              <select id="year" name="year" required>
+                <option value="" disabled selected>Select</option>
+                <option value="1">First year</option>
+                <option value="2">Second year</option>
+                <option value="3">Third year</option>
+                <option value="4">Fourth year</option>
+                <option value="other">Other</option>
+              </select>
+              <svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              <span class="ln"></span>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" type="submit" id="submitBtn" style="align-self:flex-start;margin-top:6px">
+          <span class="lbl">Join Early Access</span>
+          <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          <span class="spin" aria-hidden="true"></span>
+        </button>
+        <p class="form-msg" id="msg" role="status" aria-live="polite"></p>
+      </form>
+
+      <div class="done" id="done" tabindex="-1" aria-live="polite">
+        <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+        <h3>You're on the list, <em id="doneName">creator</em>.</h3>
+        <p>Thank you. When Store.iiec.in is ready to receive work, we'll write to <b id="doneEmail">you</b> first — and not before. Until then, keep the project you'd publish close.</p>
+        <button class="again" type="button" id="again">Submit another response</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="foot" id="contact">
+  <div class="container">
+    <div class="foot-grid">
+      <div data-reveal="fade">
+        <a class="brand" href="#top" aria-label="Store.iiec.in home">
+          <span class="logo-mark"><img src="assets/iiec-logo-96.png" alt="" width="38" height="38" loading="lazy" decoding="async"></span>
+          Store<span class="dot">.</span>iiec<span class="dot">.</span>in</a>
+        <p class="foot-desc">A home for student-built products — discovered, experienced, tested and kept growing long after submission.</p>
+        <div class="foot-socials">
+          <a href="https://www.linkedin.com/company/iiec-csmu" target="_blank" rel="noopener" aria-label="IIEC on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.55C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.72C24 .77 23.2 0 22.22 0z"/></svg></a>
+          <a href="https://twitter.com/iiec_csmu" target="_blank" rel="noopener" aria-label="IIEC on X"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.66l-5.21-6.82-5.97 6.82H1.67l7.73-8.84L1.25 2.25h6.83l4.71 6.23 5.45-6.23zm-1.16 17.52h1.83L7.08 4.13H5.12l11.96 15.64z"/></svg></a>
+          <a href="https://www.instagram.com/iiec.csmu" target="_blank" rel="noopener" aria-label="IIEC on Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+        </div>
+      </div>
+      <nav class="foot-col" aria-label="Quick links" data-reveal="fade" style="--d:100ms">
+        <h4>Quick Links</h4>
+        <a href="#top">Home</a>
+        <a href="#vision">Vision</a>
+        <a href="#about">Collection</a>
+        <a href="#join">Early Access</a>
+      </nav>
+      <div class="foot-col" data-reveal="fade" style="--d:160ms">
+        <h4>Contact</h4>
+        <a href="mailto:ecell-student-rep@csmu.ac.in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg>ecell-student-rep@csmu.ac.in</a>
+        <p class="foot-init">An Initiative by
+          <b>Incubation Innovation<br>&amp; Entrepreneurship Cell</b>
+        </p>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© <span id="yr">2026</span> Store.iiec.in · Learn · Create · Grow</span>
+      <span><a href="#top">Back to top ↑</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+  var RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  /* ---------- scroll progress + nav blur ---------- */
+  var progress = document.getElementById('progress');
+  var nav = document.getElementById('nav');
+  function chrome(){
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    progress.style.width = (h > 0 ? Math.min(100, (window.scrollY / h) * 100) : 0) + '%';
+    nav.classList.toggle('scrolled', window.scrollY > 30);
+  }
+
+  /* ---------- reveal ---------- */
+  var rev = document.querySelectorAll('[data-reveal]');
+  if('IntersectionObserver' in window && !RM){
+    var rio = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); rio.unobserve(e.target); } });
+    }, { threshold:0.16, rootMargin:'0px 0px -7% 0px' });
+    rev.forEach(function(el){ rio.observe(el); });
+  } else { rev.forEach(function(el){ el.classList.add('in'); }); }
+
+  /* ---------- folio navigator ---------- */
+  var fnum = document.getElementById('fnum');
+  var ftitle = document.getElementById('ftitle');
+  var spreads = document.querySelectorAll('[data-folio]');
+  if('IntersectionObserver' in window){
+    var fio = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){
+          var parts = e.target.getAttribute('data-folio').split('|');
+          fnum.textContent = parts[0];
+          ftitle.style.opacity = '0';
+          setTimeout(function(){ ftitle.textContent = parts[1]; ftitle.style.opacity = '1'; }, 170);
+        }
+      });
+    }, { rootMargin:'-50% 0px -50% 0px', threshold:0 });
+    spreads.forEach(function(s){ fio.observe(s); });
+  }
+
+  /* ---------- mobile menu ---------- */
+  var burger = document.getElementById('burger');
+  var mmenu = document.getElementById('mmenu');
+  function closeM(){ mmenu.classList.remove('open'); burger.classList.remove('open'); burger.setAttribute('aria-expanded','false'); }
+  burger.addEventListener('click', function(){
+    var open = mmenu.classList.toggle('open');
+    burger.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', String(open));
+  });
+  mmenu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', closeM); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeM(); });
+  window.addEventListener('resize', function(){ if(window.innerWidth > 900) closeM(); chrome(); }, { passive:true });
+
+  /* ---------- active nav link ---------- */
+  var navLinks = document.querySelectorAll('.nav-links a');
+  var linkBy = {};
+  navLinks.forEach(function(a){ linkBy[a.getAttribute('href').slice(1)] = a; });
+  if('IntersectionObserver' in window){
+    var nio = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){
+          navLinks.forEach(function(a){ a.classList.remove('active'); });
+          var l = linkBy[e.target.id]; if(l) l.classList.add('active');
+        }
+      });
+    }, { rootMargin:'-45% 0px -50% 0px' });
+    ['about','vision','contact'].forEach(function(id){ var s = document.getElementById(id); if(s) nio.observe(s); });
+  }
+
+  /* ---------- hero note tilt on pointer ---------- */
+  var hero = document.querySelector('.hero');
+  var notes = Array.prototype.slice.call(document.querySelectorAll('.note'));
+  if(hero && notes.length && !RM && window.matchMedia('(pointer: fine)').matches){
+    var raf = null;
+    hero.addEventListener('mousemove', function(e){
+      if(raf) return;
+      raf = requestAnimationFrame(function(){
+        raf = null;
+        var r = hero.getBoundingClientRect();
+        var nx = (e.clientX - r.left) / r.width - 0.5;
+        var ny = (e.clientY - r.top) / r.height - 0.5;
+        notes.forEach(function(s){
+          var d = parseFloat(s.getAttribute('data-px')) || 10;
+          s.style.setProperty('--px', (nx * d * 0.85).toFixed(1) + 'px');
+          s.style.setProperty('--py', (ny * d * 0.5).toFixed(1) + 'px');
+        });
+      });
+    });
+    hero.addEventListener('mouseleave', function(){
+      notes.forEach(function(s){ s.style.setProperty('--px','0px'); s.style.setProperty('--py','0px'); });
+    });
+  }
+
+  /* ---------- category tap toggle (touch) ---------- */
+  var tags = document.getElementById('tags');
+  if(tags){
+    tags.addEventListener('click', function(e){
+      var c = e.target.closest('.cat'); if(!c) return;
+      if(window.matchMedia('(hover: none)').matches){
+        var was = c.classList.contains('touched');
+        tags.querySelectorAll('.cat.touched').forEach(function(x){ x.classList.remove('touched'); });
+        if(!was) c.classList.add('touched');
+      }
+    });
+  }
+
+  /* ---------- unified rAF scroll loop ---------- */
+  var ticking = false;
+  function onScroll(){
+    if(ticking) return;
+    ticking = true;
+    requestAnimationFrame(function(){ chrome(); ticking = false; });
+  }
+  chrome();
+  window.addEventListener('scroll', onScroll, { passive:true });
+
+  /* ---------- form ---------- */
+  /* Google Apps Script web app (see apps-script/Code.gs).
+     Deploy -> New deployment -> Web app -> Execute as: Me -> Access: Anyone,
+     then paste the /exec URL below. Empty = save to localStorage only. */
+  var FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyx6MOLHdYUWKAZZvgXTCah_1gHWsdf8esw6f8lWqnKE8mk9h_IGNigd1sW-nOYrAQhlw/exec';
+  var FORM_TOKEN = '';    /* must match CONFIG.SHARED_SECRET in Code.gs; '' = off */
+  var form = document.getElementById('form');
+  var fields = {
+    name: document.getElementById('name'),
+    email: document.getElementById('email'),
+    phone: document.getElementById('phone'),
+    branch: document.getElementById('branch'),
+    year: document.getElementById('year')
+  };
+  var btn = document.getElementById('submitBtn');
+  var lbl = btn.querySelector('.lbl');
+  var msg = document.getElementById('msg');
+  var done = document.getElementById('done');
+  var again = document.getElementById('again');
+  var busy = false;
+  function setMsg(t, type){ msg.textContent = t || ''; msg.className = 'form-msg' + (type ? ' ' + type : ''); }
+  function setLoading(on){
+    busy = on; btn.disabled = on; btn.classList.toggle('loading', on); btn.setAttribute('aria-busy', String(on));
+    lbl.textContent = on ? 'Joining' : 'Join Early Access';
+  }
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    if(busy) return;
+    setMsg('');
+    if(!form.checkValidity()){ form.reportValidity(); setMsg('Please complete the required fields above.', 'err'); return; }
+    function optionText(sel){
+      var o = sel.options[sel.selectedIndex];
+      return o ? o.text.trim() : '';
+    }
+    var data = {
+      token: FORM_TOKEN,
+      fullName: fields.name.value.trim(),
+      email: fields.email.value.trim(),
+      phone: fields.phone.value.trim(),
+      branch: fields.branch.value,                 /* code, e.g. CSE */
+      branchLabel: optionText(fields.branch),      /* readable label */
+      studyYear: fields.year.value,                /* 1 | 2 | 3 | 4 | other */
+      studyYearLabel: optionText(fields.year),
+      page: location.href,
+      userAgent: navigator.userAgent,
+      submittedAt: new Date().toISOString()
+    };
+    setLoading(true);
+    setMsg('Adding you to the early list…', 'ok');
+    console.info('[Store.IIEC] early-access payload →', data);
+
+    function succeed(){
+      document.getElementById('doneName').textContent = (data.fullName.split(' ')[0]) || 'creator';
+      document.getElementById('doneEmail').textContent = data.email;
+      form.style.display = 'none';
+      done.classList.add('show');
+      done.focus();
+      setLoading(false);
+    }
+
+    /* No backend wired up yet: keep the response locally and confirm.
+       Set FORM_ENDPOINT above to a real URL to start POSTing submissions. */
+    if(!FORM_ENDPOINT){
+      try{
+        var store = JSON.parse(localStorage.getItem('iiec.earlyAccess') || '[]');
+        store.push(data);
+        localStorage.setItem('iiec.earlyAccess', JSON.stringify(store));
+      }catch(e){ /* storage unavailable — nothing to do */ }
+      setTimeout(succeed, 450);
+      return;
+    }
+
+    /* text/plain keeps this a CORS "simple request" — Apps Script cannot answer
+       the OPTIONS preflight that application/json would trigger. The backend
+       JSON.parse()s the body regardless of the declared type. */
+    fetch(FORM_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      redirect: 'follow',
+      body: JSON.stringify(data)
+    })
+    .then(function(res){
+      if(!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    })
+    .then(function(out){
+      if(!out || out.ok !== true) throw new Error((out && out.error) || 'Unexpected response');
+      if(out.duplicate) console.info('[Store.IIEC] already on the list');
+      succeed();
+    })
+    .catch(function(err){
+      console.warn('[Store.IIEC] submit failed:', err.message);
+      setMsg('Something slipped on our end. Please try again, or write to ecell-student-rep@csmu.ac.in.', 'err');
+      setLoading(false);
+    });
+  });
+  again.addEventListener('click', function(){
+    form.reset(); done.classList.remove('show'); form.style.display = ''; setMsg(''); fields.name.focus();
+  });
+})();
+</script>
+</body>
+</html>
