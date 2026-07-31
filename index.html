@@ -96,6 +96,8 @@ em{font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.0
 .nav{position:fixed;top:0;left:0;right:0;z-index:300;height:var(--nav-h);display:flex;align-items:center;
   transition:background .35s var(--ease),box-shadow .35s,border-color .35s,backdrop-filter .35s;border-bottom:1px solid transparent}
 .nav.scrolled{background:rgba(246,242,234,.72);-webkit-backdrop-filter:blur(16px) saturate(1.5);backdrop-filter:blur(16px) saturate(1.5);border-bottom-color:var(--line)}
+/* the panel needs a solid bar above it, even at scroll position 0 */
+.nav.menu-open{background:rgba(246,242,234,.96);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom-color:var(--line)}
 .nav .container{display:flex;align-items:center;justify-content:space-between;gap:24px}
 .brand{font-size:1rem;font-weight:700;letter-spacing:-.02em;color:var(--ink);display:inline-flex;align-items:center;gap:1px}
 .brand .dot{color:var(--accent)}
@@ -117,9 +119,12 @@ em{font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.0
 .burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
 .mmenu{position:fixed;top:var(--nav-h);left:0;right:0;z-index:290;background:rgba(246,242,234,.96);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:12px 24px 24px;display:grid;gap:2px;opacity:0;visibility:hidden;transform:translateY(-10px);transition:opacity .3s,transform .3s var(--ease),visibility .3s}
 .mmenu.open{opacity:1;visibility:visible;transform:none}
-.mmenu a{padding:13px 12px;border-radius:10px;font-weight:600;color:var(--ink-soft);transition:background .2s}
-.mmenu a:hover{background:rgba(28,28,28,.05)}
+/* :not(.btn) — otherwise these win on specificity and repaint the CTA's
+   label in dark ink on the dark charcoal button, making it unreadable */
+.mmenu a:not(.btn){padding:13px 12px;border-radius:10px;font-weight:600;color:var(--ink-soft);transition:background .2s}
+.mmenu a:not(.btn):hover{background:rgba(28,28,28,.05)}
 .mmenu .btn{margin-top:10px}
+body.menu-lock{overflow:hidden}
 
 /* ===================== BUTTONS ===================== */
 .btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:9px;
@@ -383,8 +388,8 @@ section{position:relative}
       <span class="logo-mark"><img src="assets/iiec-logo-96.png" alt="" width="34" height="34" decoding="async"></span>
       Store<span class="dot">.</span>iiec<span class="dot">.</span>in<small>An Initiative</small></a>
     <nav class="nav-links" aria-label="Primary">
-      <a href="#about">About</a>
       <a href="#vision">Vision</a>
+      <a href="#about">Collection</a>
       <a href="#contact">Contact</a>
     </nav>
     <div class="nav-cta">
@@ -396,13 +401,13 @@ section{position:relative}
   </div>
 </header>
 <div class="mmenu" id="mmenu">
-  <a href="#about">About</a>
   <a href="#vision">Vision</a>
+  <a href="#about">Collection</a>
   <a href="#contact">Contact</a>
   <a href="#join" class="btn btn-primary"><span class="lbl">Notify Me</span></a>
 </div>
 
-<main id="top">
+<main id="top" tabindex="-1">
 
 <!-- ============ HERO ============ -->
 <section class="hero" data-folio="01|Opening">
@@ -690,14 +695,24 @@ section{position:relative}
   /* ---------- mobile menu ---------- */
   var burger = document.getElementById('burger');
   var mmenu = document.getElementById('mmenu');
-  function closeM(){ mmenu.classList.remove('open'); burger.classList.remove('open'); burger.setAttribute('aria-expanded','false'); }
-  burger.addEventListener('click', function(){
-    var open = mmenu.classList.toggle('open');
+  function menuOpen(){ return mmenu.classList.contains('open'); }
+  function setMenu(open){
+    mmenu.classList.toggle('open', open);
     burger.classList.toggle('open', open);
+    nav.classList.toggle('menu-open', open);
+    document.body.classList.toggle('menu-lock', open);   // stop the page scrolling behind it
     burger.setAttribute('aria-expanded', String(open));
-  });
+    burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  }
+  function closeM(){ setMenu(false); }
+  burger.addEventListener('click', function(e){ e.stopPropagation(); setMenu(!menuOpen()); });
   mmenu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', closeM); });
-  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeM(); });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && menuOpen()){ closeM(); burger.focus(); }
+  });
+  document.addEventListener('click', function(e){          // tap anywhere else to dismiss
+    if(menuOpen() && !mmenu.contains(e.target) && !burger.contains(e.target)) closeM();
+  });
   window.addEventListener('resize', function(){ if(window.innerWidth > 900) closeM(); chrome(); }, { passive:true });
 
   /* ---------- active nav link ---------- */
@@ -707,13 +722,17 @@ section{position:relative}
   if('IntersectionObserver' in window){
     var nio = new IntersectionObserver(function(es){
       es.forEach(function(e){
+        var l = linkBy[e.target.id];
+        if(!l) return;
         if(e.isIntersecting){
           navLinks.forEach(function(a){ a.classList.remove('active'); });
-          var l = linkBy[e.target.id]; if(l) l.classList.add('active');
+          l.classList.add('active');
+        } else {
+          l.classList.remove('active');   // otherwise it stays lit back up in the hero
         }
       });
     }, { rootMargin:'-45% 0px -50% 0px' });
-    ['about','vision','contact'].forEach(function(id){ var s = document.getElementById(id); if(s) nio.observe(s); });
+    ['vision','about','contact'].forEach(function(id){ var s = document.getElementById(id); if(s) nio.observe(s); });
   }
 
   /* ---------- hero note tilt on pointer ---------- */
