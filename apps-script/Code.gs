@@ -1,5 +1,5 @@
 /**
- * Store.IIEC.in — early-access form backend.
+ * IIEC Store — early-access form backend.
  *
  * POST from index.html  ->  formatted Google Sheet  ->  .xlsx in Drive.
  *
@@ -32,7 +32,7 @@ var CONFIG = {
   SHEET_NAME:     'Early Access',
   SUMMARY_NAME:   'Summary',
   XLSX_FOLDER_ID: '1bz6FVv2Dq-O7CA44EQYQSdtgM2ia-HmC',
-  XLSX_NAME:      'Store.IIEC.in Early Access.xlsx',
+  XLSX_NAME:      'IIEC Store Early Access.xlsx',
   /* Optional. Paste the ID of an existing .xlsx in your Drive to have the script
      overwrite THAT file every time (from its URL: /file/d/<ID>/view).
      Leave empty and the script manages its own file named XLSX_NAME. */
@@ -60,7 +60,7 @@ var THEME = { header:'#B66A3C', headerText:'#FFFFFF', line:'#D9D2C7', band:'#F6F
 function doGet(e) {
   var p = (e && e.parameter) || {};
   if (p.diag) return json(diagnostics());
-  return json({ ok:true, service:'Store.IIEC.in early access', time:new Date().toISOString() });
+  return json({ ok:true, service:'IIEC Store early access', time:new Date().toISOString() });
 }
 
 /**
@@ -162,7 +162,7 @@ function doPost(e) {
 
     if (CONFIG.NOTIFY_EMAIL) {
       try {
-        MailApp.sendEmail(CONFIG.NOTIFY_EMAIL, 'New Store.IIEC.in early-access signup',
+        MailApp.sendEmail(CONFIG.NOTIFY_EMAIL, 'New IIEC Store early-access signup',
           [name, email, phone, trim(data.branchLabel), trim(data.studyYear)].join('\n'));
       } catch (err) { console.warn('notify failed: ' + err); }
     }
@@ -327,7 +327,7 @@ function buildSummary() {
   sheet.clear();
   sheet.getBandings().forEach(function (b) { b.remove(); });
 
-  sheet.getRange('A1').setValue('Store.IIEC.in — Early Access Summary')
+  sheet.getRange('A1').setValue('IIEC Store — Early Access Summary')
     .setFontSize(14).setFontWeight('bold').setFontColor(THEME.header);
   sheet.getRange('A2').setFormula('="Updated "&TEXT(NOW(),"yyyy-mm-dd hh:mm")')
     .setFontColor('#66635F').setFontSize(9);
